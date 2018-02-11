@@ -56,7 +56,8 @@ def get_locations(lst, max_locat=20):
     for element in lst:
         try:
             location = geolocator.geocode(element[1])
-            locations.append((element[0], (location.latitude, location.longitude)))
+            locations.append((element[0], (location.latitude,
+                                           location.longitude)))
             if len(locations) == max_locat:
                 break
         except:
@@ -77,10 +78,11 @@ def pop_layer(filename="world.json", name="population", encoding="utf-8-sig"):
     layer = folium.FeatureGroup(name=name)
     layer.add_child(folium.GeoJson(data=open(filename, 'r',
                                              encoding=encoding).read(),
-                                   style_function=lambda x: {'fillColor': 'green'
+                                   style_function=lambda x: {'fillColor': 'red'
                                    if x['properties']['POP2005'] < 10000000
-                                   else 'orange' if 10000000 <= x['properties']['POP2005'] < 20000000
-                                   else 'red'}))
+                                   else 'orange' if 10000000 <=
+                                   x['properties']['POP2005'] < 20000000
+                                   else 'green'}))
     return layer
 
 
@@ -105,8 +107,10 @@ def area_layer(filename="world.json", name="area", encoding="utf-8-sig"):
     layer = folium.FeatureGroup(name=name)
     layer.add_child(folium.GeoJson(data=open(filename, 'r',
                                              encoding=encoding).read(),
-                                   style_function=lambda x: {'fillColor': fill_color(x['properties']['AREA'])
-                                                             }))
+                                   style_function=lambda x:
+                                       {'fillColor':
+                                           fill_color(x['properties']['AREA'])
+                                        }))
     return layer
 
 
@@ -123,11 +127,11 @@ def map_creator(*layers):
 
 def main():
     year = input_data(int, "1895 < a < 2027", "Input year: ")
-    #path = input_data(str, message="Input path: ")
-    max_location = input_data(int, "0 < a < 111", "Input max number of markers: ")
-    countries = country_dict(read_file("locations.list"), 2013)
+    path = input_data(str, message="Input path: ")
+    max_mark = input_data(int, "0 < a < 111", "Input max number of markers: ")
+    countries = country_dict(read_file(path), year)
     random.shuffle(countries)
-    locations = get_locations(countries, max_location)
+    locations = get_locations(countries, max_mark)
     map_creator(area_layer(), pop_layer(), films_layer(locations))
 
 
