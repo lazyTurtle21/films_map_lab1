@@ -4,15 +4,16 @@ import random
 from geopy.geocoders import Nominatim
 
 
-def input_data(data_type, raid="a", message=""):
+def input_data(data_type, condition="a", message=""):
     """
-    (type, str) -> (object)
-    Returns the valid for data_type input with message for user
+    (type, str, str) -> (object)
+    Returns the valid for data_type and condition
+    input with message for user
     """
     while True:
         try:
             a = data_type(input(message))
-            if not eval(raid):
+            if not eval(condition):
                 raise ValueError
             return a
         except ValueError:
@@ -36,8 +37,10 @@ def read_file(path):
 
 def country_dict(lines_list, year):
     """
-    (list) -> (dict)
-    Returns dict made of list of lines with country as key and name as value.
+    (list) -> (list)
+    Returns list of tuples made of list of lines with
+    name of movie as the first element in a tuple and
+    place where it was filmed as the second element.
     """
     lst = []
     for line in lines_list:
@@ -50,6 +53,13 @@ def country_dict(lines_list, year):
 
 
 def get_locations(lst, max_locat=20):
+    """
+    (list, int) -> (list)
+    :param lst: list of locations and films
+    :param max_locat: a max number of locations function finds
+    :return: list of tuples = [(film_name,(location.latitude,
+                                           location.longitude)]
+    """
     locations = []
     geolocator = Nominatim()
     for element in lst:
@@ -65,6 +75,13 @@ def get_locations(lst, max_locat=20):
 
 
 def films_layer(locations):
+    """
+    (list of tuples) -> (layer of map)
+    Creates and return markers as layer of the map
+    with name of film as popup and locations where it was filmed.
+    :param locations: list with name of films and locations
+    :return: films layer of map
+    """
     films = folium.FeatureGroup(name="films")
     for el in locations:
         popup = folium.Popup(el[0], parse_html=True)
@@ -74,6 +91,13 @@ def films_layer(locations):
 
 
 def pop_layer(filename="world.json", name="population", encoding="utf-8-sig"):
+    """
+    Returns population layer of the map
+    :param filename: name of file with info about countries
+    :param name: name of layer
+    :param encoding: encoding of the file
+    :return: layer of the map
+    """
     layer = folium.FeatureGroup(name=name)
     layer.add_child(folium.GeoJson(data=open(filename, 'r',
                                              encoding=encoding).read(),
@@ -86,7 +110,15 @@ def pop_layer(filename="world.json", name="population", encoding="utf-8-sig"):
 
 
 def area_layer(filename="world.json", name="area", encoding="utf-8-sig"):
+    """
+    Returns the area layer of map
+    :param filename: name of file with info about countries
+    :param name: name of layer
+    :param encoding: encoding of the file
+    :return: layer of the map
+    """
     def fill_color(number):
+        """Returns color depending on the number"""
         if number < 20000:
             return '#FF0000'
         elif 20000 <= number < 60000:
@@ -114,6 +146,12 @@ def area_layer(filename="world.json", name="area", encoding="utf-8-sig"):
 
 
 def map_creator(*layers):
+    """
+    Creates and saves in html file map with layers.
+    Also adds additional layers for map.
+    :param layers: layer for the map(area layer, film layer...)
+    :return: None
+    """
     map_f = folium.Map()
     for layer in layers:
         map_f.add_child(layer)
@@ -121,14 +159,15 @@ def map_creator(*layers):
     folium.TileLayer('stamentoner').add_to(map_f)
     folium.TileLayer('Mapbox Control Room').add_to(map_f)
     map_f.add_child(folium.LayerControl())
-    map_f.save('Blabla.html')
+    map_f.save('Kholod_Film_map.html')
 
 
 def main():
-    year = input_data(int, "1895 < a < 2027", "Input year: ")
-    path = input_data(str, message="Input path: ")
-    max_mark = input_data(int, "0 < a < 111", "Input max number of markers: ")
-    countries = country_dict(read_file(path), year)
+    """Main function which calls all other functions"""
+    year = input_data(int, "1887 < a < 2027", "Input year: ")
+    max_mark = input_data(int, "0 < a < 101",
+                          "Input max number of markers(up to 100): ")
+    countries = country_dict(read_file('locations.list'), year)
     random.shuffle(countries)
     locations = get_locations(countries, max_mark)
     map_creator(area_layer(), pop_layer(), films_layer(locations))
