@@ -1,5 +1,4 @@
 import folium
-import pandas
 import re
 import random
 from geopy.geocoders import Nominatim
