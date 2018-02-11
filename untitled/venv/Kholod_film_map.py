@@ -1,5 +1,4 @@
 import folium
-import re
 import random
 from geopy.geocoders import Nominatim
 
@@ -35,7 +34,7 @@ def read_file(path):
     return lst
 
 
-def country_dict(lines_list, year):
+def country_lst(lines_list, year):
     """
     (list) -> (list)
     Returns list of tuples made of list of lines with
@@ -44,11 +43,11 @@ def country_dict(lines_list, year):
     """
     lst = []
     for line in lines_list:
-        if ('(' + str(year)) in line:
-            line = re.sub(r'\([^()]*\)', '', line)
-            line = re.sub(r'{[^()]*}', '', line)
-            lines = re.split(r'\s\t+', line.strip())
-            lst.append((lines[0], lines[1]))
+        if ('(' + str(year) + ')') in line:
+            indx = line.find('('+str(year))
+            lines = line.split('\t')
+            lst.append((line[0:indx-1], lines[-1] if lines[-1][0] != '('
+                        else lines[-2]))
     return lst
 
 
@@ -167,7 +166,7 @@ def main():
     year = input_data(int, "1887 < a < 2027", "Input year: ")
     max_mark = input_data(int, "0 < a < 101",
                           "Input max number of markers(up to 100): ")
-    countries = country_dict(read_file('locations.list'), year)
+    countries = country_lst(read_file('locations.list'), year)
     random.shuffle(countries)
     locations = get_locations(countries, max_mark)
     map_creator(area_layer(), pop_layer(), films_layer(locations))
