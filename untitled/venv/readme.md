@@ -6,6 +6,5 @@
    (I made it because geopy takes a long time to give the place latitude and longtitide<br>
    and also the map would be hard to understand and not user-friendly with such amount of markers)<br>
 4) Run Kholod_Film_map.html to see the map.<br>
-5) You can choose different colors for your map and different layers(each country has a color depending on its area or population)
-![alt text](https://i.imgur.com/anSAh3A.png)
-
+5) You can choose different colors for your map and different layers(each country has a color depending on its area or population)<br>
+<img src="https://i.imgur.com/anSAh3A.png"/>
