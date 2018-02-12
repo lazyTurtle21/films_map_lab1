@@ -1,6 +1,6 @@
 <h1>Sophia Kholod`s films map(lab1)</h1>
 <h2>How to use:</h2>
-1) Install all libraries from file 'requirements.txt'.
+1) Install all libraries from file 'requirements.txt'.<br>
 2) Run python program<br>
 3) Enter the year in which films were made (from 1888 to 2026)<br>
 4) Enter the max number of markers which will be shown on map. <br>
