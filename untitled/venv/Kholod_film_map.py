@@ -1,6 +1,6 @@
 import folium
 import random
-from geopy.geocoders import Nominatim
+from geopy import ArcGIS
 
 
 def input_data(data_type, condition="a", message=""):
@@ -60,7 +60,7 @@ def get_locations(lst, max_locat=20):
                                            location.longitude)]
     """
     locations = []
-    geolocator = Nominatim()
+    geolocator = ArcGIS(timeout=10)
     for element in lst:
         try:
             location = geolocator.geocode(element[1])
@@ -85,7 +85,9 @@ def films_layer(locations):
     for el in locations:
         popup = folium.Popup(el[0], parse_html=True)
         films.add_child(folium.Marker(location=[el[1][0], el[1][1]],
-                                      popup=popup))
+                                      popup=popup, icon=folium.Icon(color='darkred',
+                                                                    icon='info-circle',
+                                                                    prefix='fa')))
     return films
 
 
